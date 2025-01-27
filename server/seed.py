@@ -26,7 +26,7 @@ def seed_data():
         pizza3 = Pizza(name="BBQ Chicken", ingredients="Chicken, BBQ Sauce, Cheese")
         db.session.add_all([pizza1, pizza2, pizza3])
 
-        # Add restaurant-pizza relationships
+        # Add restaurant-pizza relationships (fix the relationship name)
         restaurant_pizza1 = RestaurantPizza(price=15, restaurant=restaurant1, pizza=pizza1)
         restaurant_pizza2 = RestaurantPizza(price=12, restaurant=restaurant1, pizza=pizza2)
         restaurant_pizza3 = RestaurantPizza(price=10, restaurant=restaurant2, pizza=pizza3)
