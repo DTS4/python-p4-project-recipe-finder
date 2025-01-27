@@ -6,9 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_session import Session
 from config import app, db, api
-from models import User, Recipe, Favorite, Restaurant, Pizza, RestaurantPizza
+from models import User, Recipe, Favorite
 from sqlalchemy import or_
-
 import os
 
 # Configure database
@@ -18,7 +17,7 @@ DATABASE = os.environ.get("DB_URI", f"sqlite:///{os.path.join(BASE_DIR, 'app.db'
 app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.secret_key = os.environ.get("SECRET_KEY", "supersecretkey")   
+app.secret_key = os.environ.get("SECRET_KEY", "supersecretkey")
 Session(app)
 
 db.init_app(app)
@@ -98,7 +97,7 @@ def get_recipes():
 
     query = Recipe.query
     if search:
-        query = query.filter(or_(Recipe.description.ilike(f"%{search}%"), Recipe.image_url.ilike(f"%{search}%")))
+        query = query.filter(or_(Recipe.description.ilike(f"%{search}%"), Recipe.title.ilike(f"%{search}%")))
 
     recipes = query.paginate(page, per_page, False)
     return jsonify([recipe.to_dict() for recipe in recipes.items])
@@ -114,49 +113,60 @@ def get_recipe_by_id(id):
 @login_required
 def create_recipe():
     data = request.get_json()
+    user_id = session.get("user_id")
+
     try:
         new_recipe = Recipe(
+            title=data['title'],
             description=data['description'],
             image_url=data.get('image_url'),
-            user_id=session['user_id']  # Use the user_id from the session
+            source_url=data.get('source_url'),
+            user_id=user_id  # Associate with logged-in user
         )
         db.session.add(new_recipe)
         db.session.commit()
         return jsonify(new_recipe.to_dict()), 201
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"error": "Invalid data or foreign key constraint violation"}), 400
+        return jsonify({"error": "Invalid data"}), 400
 
-# --- Favorite Routes ---
-@app.route('/favorites', methods=['GET'])
-def get_favorites():
-    favorites = Favorite.query.all()
-    return jsonify([favorite.to_dict() for favorite in favorites])
+@app.route('/recipes/<int:id>', methods=['PUT'])
+@login_required
+def update_recipe(id):
+    recipe = Recipe.query.get(id)
+    if not recipe:
+        return jsonify({"error": "Recipe not found"}), 404
 
-@app.route('/favorites', methods=['POST'])
-def create_favorite():
+    # Ensure the logged-in user owns the recipe
+    if recipe.user_id != session.get("user_id"):
+        return jsonify({"error": "Unauthorized"}), 403
+
     data = request.get_json()
     try:
-        new_favorite = Favorite(
-            user_id=data['user_id'],
-            recipe_id=data['recipe_id'],
-            notes=data.get('notes')
-        )
-        db.session.add(new_favorite)
+        recipe.title = data.get('title', recipe.title)
+        recipe.description = data.get('description', recipe.description)
+        recipe.image_url = data.get('image_url', recipe.image_url)
+        recipe.source_url = data.get('source_url', recipe.source_url)
         db.session.commit()
-        return jsonify(new_favorite.to_dict()), 201
+        return jsonify(recipe.to_dict()), 200
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"error": "Invalid data or foreign key constraint violation"}), 400
+        return jsonify({"error": "Invalid data"}), 400
 
-@app.route('/favorites/<int:id>', methods=['DELETE'])
-def delete_favorite(id):
-    favorite = Favorite.query.get(id)
-    if not favorite:
-        return jsonify({"error": "Favorite not found"}), 404
-    db.session.delete(favorite)
+@app.route('/recipes/<int:id>', methods=['DELETE'])
+@login_required
+def delete_recipe(id):
+    recipe = Recipe.query.get(id)
+    if not recipe:
+        return jsonify({"error": "Recipe not found"}), 404
+
+    # Ensure the logged-in user owns the recipe
+    if recipe.user_id != session.get("user_id"):
+        return jsonify({"error": "Unauthorized"}), 403
+
+    db.session.delete(recipe)
     db.session.commit()
-    return '', 204
+    return jsonify({"message": "Recipe deleted successfully"}), 204
 
 # --- Other Routes ---
 if __name__ == '__main__':
