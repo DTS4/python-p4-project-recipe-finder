@@ -1,0 +1,43 @@
+.recipe-results {
+    padding: 20px;
+    text-align: center;
+  }
+  
+  .recipe-image {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+  }
+  
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    margin-top: 20px;
+  }
+  
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    margin: 5px 0;
+  }
+  
+  button {
+    background-color: #ff6347;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #e55347;
+  }
+  

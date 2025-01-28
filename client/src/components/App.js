@@ -4,7 +4,7 @@ import NavBar from './NavBar';
 import HomePage from '../pages/HomePage';  
 import RecipeResultsPage from '../pages/RecipeResultsPage';  
 import DashboardPage from '../pages/DashboardPage';  
-import SignupPage from '../pages/SignUpPage';  
+import SignupPage from '../pages/SignupPage';  
 import LoginPage from '../pages/LoginPage';  
 
 function App() {

@@ -1,12 +1,13 @@
-// src/components/LoginPage.js
+// src/components/SignupPage.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import './LoginPage.css'; // Import the CSS
+import './SignupPage.css';
 
-const LoginPage = () => {
+const SignupPage = () => {
   const [user, setUser] = useState({
     username: '',
+    email: '',
     password: '',
   });
   const [errorMessage, setErrorMessage] = useState('');
@@ -20,30 +21,37 @@ const LoginPage = () => {
     });
   };
 
-  const handleLogin = async (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5555/login', user);
-      const token = response.data.token; // Assuming your backend sends a token
-      localStorage.setItem('token', token); // Store the token (e.g., localStorage)
-      history.push('/dashboard');
+      const response = await axios.post('http://localhost:5555/signup', user);
+      alert('Signup successful');
+      history.push('/login');
     } catch (error) {
-      setErrorMessage(error.response?.data.error || 'Login failed');
+      setErrorMessage(error.response?.data.error || 'Signup failed');
     }
   };
 
   return (
-    <div className="login-container"> {/* Wrapping container */}
-      <div className="login-form"> {/* Form container */}
-        <h2>Login</h2>
-        {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Error message with class */}
-        <form onSubmit={handleLogin}>
+    <div className="signup-container">
+      <div className="signup-form">
+        <h2>Signup</h2>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        <form onSubmit={handleSignup}>
           <input
             type="text"
             name="username"
             value={user.username}
             onChange={handleInputChange}
             placeholder="Username"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            value={user.email}
+            onChange={handleInputChange}
+            placeholder="Email"
             required
           />
           <input
@@ -54,11 +62,11 @@ const LoginPage = () => {
             placeholder="Password"
             required
           />
-          <button type="submit">Login</button>
+          <button type="submit">Sign Up</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default LoginPage;
+export default SignupPage;
