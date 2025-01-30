@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom'; // This is for version 5
 import './RecipeResultsPage.css';
 
 const RecipeResults = () => {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const history = useHistory();
+  const history = useHistory(); // Initialize useHistory hook
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -30,7 +30,7 @@ const RecipeResults = () => {
   }, []);
 
   const handleViewRecipe = (id) => {
-    history.push(`/recipe/${id}`);
+    history.push(`/recipe/${id}`); // Navigate using history.push
   };
 
   const handleDeleteRecipe = async (id) => {

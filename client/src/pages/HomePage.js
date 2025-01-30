@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import './HomePage.css';
 
 const HomePage = () => {
@@ -6,22 +7,45 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Check authentication on component mount
   useEffect(() => {
-    const fetchRecipes = async () => {
+    const checkAuthentication = async () => {
       try {
-        const response = await fetch('/recipes', { credentials: 'include' });
-        if (!response.ok) throw new Error('Failed to fetch recipes');
-        const data = await response.json();
-        setRecipes(data);
+        const response = await fetch('/profile', { credentials: 'include' });
+        if (response.ok) {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
       } catch (err) {
-        setError('Failed to load recipes.');
-      } finally {
-        setLoading(false);
+        console.error('Failed to check authentication', err);
+        setIsAuthenticated(false);
       }
     };
-    fetchRecipes();
+
+    checkAuthentication();
   }, []);
+
+  // Fetch recipes only if authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      const fetchRecipes = async () => {
+        try {
+          const response = await fetch('/recipes', { credentials: 'include' });
+          if (!response.ok) throw new Error('Failed to fetch recipes');
+          const data = await response.json();
+          setRecipes(data);
+        } catch (err) {
+          setError('Failed to load recipes.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchRecipes();
+    }
+  }, [isAuthenticated]);
 
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
@@ -45,27 +69,35 @@ const HomePage = () => {
         />
       </section>
 
-      <section className="featured-recipes">
-        <h2>Featured Recipes</h2>
-        {loading ? (
-          <p>Loading recipes...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : filteredRecipes.length > 0 ? (
-          <div className="recipe-grid">
-            {filteredRecipes.map((recipe) => (
-              <div key={recipe.id} className="recipe-card">
-                <img src={recipe.image_url || 'https://res.cloudinary.com/dulnfomcr/image/upload/v1738158416/download_2_qgx3sy.jpg'} alt={recipe.title} />
-                <h3>{recipe.title}</h3>
-                <p>{recipe.description}</p>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No recipes found.</p>
-        )}
-      </section>
+      {/* Display recipes if authenticated */}
+      {isAuthenticated && (
+        <section className="featured-recipes">
+          <h2>Featured Recipes</h2>
+          {loading ? (
+            <p>Loading recipes...</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : filteredRecipes.length > 0 ? (
+            <div className="recipe-grid">
+              {filteredRecipes.map((recipe) => (
+                <div key={recipe.id} className="recipe-card">
+                  <img
+                    src={recipe.image_url || 'https://res.cloudinary.com/dulnfomcr/image/upload/v1738158416/download_2_qgx3sy.jpg'}
+                    alt={recipe.title}
+                  />
+                  <h3>{recipe.title}</h3>
+                  <p>{recipe.description}</p>
+                  <Link to={`/recipe/${recipe.id}`} className="recipe-link">View Recipe</Link>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p>No recipes found.</p>
+          )}
+        </section>
+      )}
 
+      {/* About Recipe Finder Section */}
       <section className="about-recipe-finder">
         <div className="text">
           <h2>What is Recipe Finder?</h2>
@@ -81,7 +113,7 @@ const HomePage = () => {
         </div>
       </section>
 
-
+      {/* About Us Section */}
       <section className="about-us">
         <div className="image-container">
           <img src="https://res.cloudinary.com/dulnfomcr/image/upload/v1738158416/download_zolibn.jpg" alt="About Us" />
@@ -97,7 +129,7 @@ const HomePage = () => {
         </div>
       </section>
 
-
+      {/* User Feedback Section */}
       <section className="user-feedback">
         <h2>What People Are Saying</h2>
         <p>Our users love Recipe Finder! Here are just a few of the glowing reviews:</p>
@@ -122,7 +154,7 @@ const HomePage = () => {
         <p>But don’t just take our word for it—join the Recipe Finder community and see for yourself how it can transform your cooking experience!</p>
       </section>
 
-
+      {/* Contact Us Section */}
       <section className="contact-us">
         <h2>Why Choose Recipe Finder?</h2>
         <p>Have questions? Reach us at recipefinder@gmail.com</p>
@@ -138,5 +170,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-
