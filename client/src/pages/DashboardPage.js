@@ -1,114 +1,70 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useHistory } from "react-router-dom";
-// import RecipeForm from "../components/RecipeForm";
-import "./DashboardPage.css";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import RecipeForm from "../components/RecipeForm"; 
 
-const DashboardPage = ({ user, setUser }) => {
-  const history = useHistory();
+const Dashboard = () => {
   const [recipes, setRecipes] = useState([]);
+  const [showForm, setShowForm] = useState(false); 
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      history.push("/login");
-      return;
-    }
-
-    if (!user) {
-      const fetchUserData = async () => {
-        try {
-          const response = await fetch("/user", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          if (response.ok) {
-            const data = await response.json();
-            setUser(data);
-          } else {
-            localStorage.removeItem("token");
-            history.push("/login");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          history.push("/login");
-        }
-      };
-
-      fetchUserData();
-    }
-  }, [user, setUser, history]);
-
-  useEffect(() => {
-    if (user?.id) {
-      const fetchRecipes = async () => {
-        try {
-          const response = await fetch("/recipes");
-          if (!response.ok) throw new Error("Failed to fetch recipes");
-
-          const data = await response.json();
-          setRecipes(data);
-        } catch (error) {
-          console.error("Error fetching recipes:", error);
-        }
-      };
-
-      fetchRecipes();
-    }
-  }, [user?.id]);
-
-  const handleNewRecipe = useCallback((newRecipe) => {
-    setRecipes((prevRecipes) => [...prevRecipes, newRecipe]);
+    axios.get("/recipes")
+      .then(response => {
+        setRecipes(response.data);
+      })
+      .catch(err => {
+        console.error("Error fetching recipes:", err);
+      });
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch("/logout", { method: "POST" });
-      if (response.ok) {
-        setUser(null);
-        localStorage.removeItem("token");
-        history.push("/login");
-      }
-    } catch (error) {
-      console.error("Logout failed:", error);
+  const handleToggleForm = () => {
+    setShowForm(!showForm); 
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you sure you want to delete this recipe?")) {
+      axios.delete(`/recipes/${id}`)
+        .then(response => {
+          setRecipes(recipes.filter(recipe => recipe.id !== id)); // Remove the deleted recipe from the state
+        })
+        .catch(err => {
+          console.error("Error deleting recipe:", err);
+        });
     }
   };
 
   return (
-    <div className="dashboard-container">
-      <header>
-        <h1>Welcome, {user?.username || "User"}!</h1>
-        <p>Your central hub for all things Recipe Finder.</p>
-      </header>
+    <div>
+      <h2>Dashboard</h2>
+      
+      {/* Toggle button to show or hide the recipe form */}
+      <button onClick={handleToggleForm}>
+        {showForm ? "Cancel" : "Add New Recipe"}
+      </button>
 
-      <section className="dashboard-content">
-        {/* <RecipeForm onSuccess={handleNewRecipe} /> */}
+      {/* Show the RecipeForm if showForm is true */}
+      {showForm && <RecipeForm />}
 
-        <h2>My Recipes</h2>
-        <ul>
-          {recipes.length > 0 ? (
-            recipes.slice(0, 5).map((recipe) => (
-              <li key={recipe.id} className="recipe-item">
-                <h3>{recipe.title}</h3>
-                {recipe.image_url && (
-                  <img src={recipe.image_url} alt={recipe.title} className="recipe-image" />
-                )}
-                <p><strong>Ingredients:</strong> {recipe.ingredients}</p>
-                <p><strong>Instructions:</strong> {recipe.instructions}</p>
-              </li>
-            ))
-          ) : (
-            <p>No recipes added yet.</p>
-          )}
-        </ul>
-      </section>
-
-      <footer>
-        <button className="logout-button" onClick={handleLogout}>
-          Log Out
-        </button>
-      </footer>
+      <h3>Your Recipes</h3>
+      <ul>
+        {recipes.length > 0 ? (
+          recipes.map((recipe) => (
+            <li key={recipe.id}>
+              <h4>{recipe.title}</h4>
+              <p>{recipe.ingredients}</p>
+              <img src={recipe.image_url} alt={recipe.title} width="100" />
+              <div>
+                <Link to={`/recipes/${recipe.id}/edit`}>Edit</Link>
+                <button onClick={() => handleDelete(recipe.id)}>Delete</button>
+              </div>
+            </li>
+          ))
+        ) : (
+          <p>No recipes found. Add some recipes!</p>
+        )}
+      </ul>
     </div>
   );
 };
 
-export default DashboardPage;
+export default Dashboard;

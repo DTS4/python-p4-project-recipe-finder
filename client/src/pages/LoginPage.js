@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";  // Keep this line unchanged
 import "./LoginPage.css";
 
 const LoginPage = ({ handleLogin }) => {
   const [user, setUser] = useState({ username: "", password: "" });
   const [errorMessage, setErrorMessage] = useState("");
-  const history = useHistory();
+  const history = useHistory();  // This should work with v5
 
   const handleInputChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
@@ -31,7 +31,7 @@ const LoginPage = ({ handleLogin }) => {
       if (response.status === 200) {
         alert("Login successful!");
         handleLogin(response.data.user);
-        history.push("/recipes");  
+        history.push("/recipes");  // Use history.push() to navigate
       }
     } catch (error) {
       setErrorMessage(error.response?.data.message || "Login failed. Check your credentials.");

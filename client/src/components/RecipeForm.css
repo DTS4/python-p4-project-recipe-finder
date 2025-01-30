@@ -1,4 +1,4 @@
-/* RecipeForm.css */
+/* RecipeForm.css
 .recipe-form-container {
     max-width: 600px;
     margin: 2rem auto;
@@ -76,4 +76,78 @@
     background-color: #ccc;
     cursor: not-allowed;
   }
-  
+   */
+
+/* RecipeForm.css */
+
+.recipe-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the form horizontally */
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  background-color: #f8f8f8; /* Light background color */
+  width: 500px; /* Set a max width for the form */
+  margin: 20px auto; /* Center the container on the page */
+}
+
+.recipe-form-container h2 {
+  margin-bottom: 20px;
+  color: #333; /* Darker heading color */
+}
+
+.recipe-form-container form {
+  width: 100%;
+}
+
+.recipe-form-container label {
+  display: block; /* Make labels stack on top of inputs */
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.recipe-form-container input,
+.recipe-form-container textarea {
+  width: calc(100% - 12px); /* Account for padding and border */
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+.recipe-form-container textarea {
+  height: 120px; /* Set a reasonable height for textareas */
+  resize: vertical; /* Allow vertical resizing of textareas */
+}
+
+.recipe-form-container button {
+  background-color: #4CAF50; /* Green button */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.recipe-form-container button:hover {
+  background-color: #45a049; /* Darker green on hover */
+}
+
+.recipe-form-container input:focus,
+.recipe-form-container textarea:focus {
+  outline: none; /* Remove default outline */
+  border-color: #4CAF50; /* Highlight border on focus */
+  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); /* Add a subtle shadow on focus */
+}
+
+
+/* Responsive adjustments (example) */
+@media (max-width: 600px) {
+  .recipe-form-container {
+    width: 90%; /* Make the form wider on smaller screens */
+  }
+}

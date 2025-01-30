@@ -10,7 +10,7 @@ login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    return db.session.get(User, int(user_id))  # Updated method
+    return db.session.get(User, int(user_id))
 
 @app.route("/")
 def home():
@@ -112,7 +112,7 @@ def get_recipes():
             for r in recipes
         ]), 200
     except Exception as e:
-        return jsonify({"error": "Database error", "details": str(e)}), 500 
+        return jsonify({"error": "Database error", "details": str(e)}), 500
 
 @app.route("/search", methods=["GET"])
 def search():
@@ -120,6 +120,62 @@ def search():
     recipes = Recipe.query.filter(func.lower(Recipe.title).contains(query.lower())).all()
 
     return jsonify([{"id": r.id, "title": r.title} for r in recipes])
+
+# New route for searching by ingredients
+@app.route("/recipes/ingredients", methods=["GET"])
+def search_by_ingredients():
+    query = request.args.get("query", "")
+    recipes = Recipe.query.filter(func.lower(Recipe.ingredients).contains(query.lower())).all()
+
+    return jsonify([{"id": r.id, "title": r.title, "ingredients": r.ingredients} for r in recipes])
+
+# New route for updating a recipe
+@app.route("/recipes/<int:recipe_id>", methods=["PATCH"])
+@login_required
+def update_recipe(recipe_id):
+    data = request.json
+    recipe = Recipe.query.get(recipe_id)
+
+    if not recipe:
+        return jsonify({"message": "Recipe not found"}), 404
+
+    if recipe.user_id != current_user.id:
+        return jsonify({"message": "Unauthorized to update this recipe"}), 403
+
+    recipe.title = data.get("title", recipe.title)
+    recipe.ingredients = data.get("ingredients", recipe.ingredients)
+    recipe.instructions = data.get("instructions", recipe.instructions)
+    recipe.image_url = data.get("image_url", recipe.image_url)
+
+    db.session.commit()
+
+    return jsonify({
+        "message": "Recipe updated successfully!",
+        "recipe": {
+            "id": recipe.id,
+            "title": recipe.title,
+            "ingredients": recipe.ingredients,
+            "instructions": recipe.instructions,
+            "image_url": recipe.image_url
+        }
+    }), 200
+
+# New route for deleting a recipe
+@app.route("/recipes/<int:recipe_id>", methods=["DELETE"])
+@login_required
+def delete_recipe(recipe_id):
+    recipe = Recipe.query.get(recipe_id)
+
+    if not recipe:
+        return jsonify({"message": "Recipe not found"}), 404
+
+    if recipe.user_id != current_user.id:
+        return jsonify({"message": "Unauthorized to delete this recipe"}), 403
+
+    db.session.delete(recipe)
+    db.session.commit()
+
+    return jsonify({"message": "Recipe deleted successfully!"}), 200
 
 if __name__ == "__main__":
     app.run(debug=True, port=5555)
