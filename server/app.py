@@ -85,18 +85,46 @@ def recipe_detail(recipe_id):
     })
 
 # Add Recipe Route
+# Add Recipe Route
 @app.route('/add_recipe', methods=['POST'])
 @login_required
 def add_recipe():
-    data = request.json
-    title = data.get('title')
-    description = data.get('description')
-    image_url = data.get('image_url')
+    try:
+        data = request.get_json()
 
-    new_recipe = Recipe(title=title, description=description, image_url=image_url, user_id=current_user.id)
-    db.session.add(new_recipe)
-    db.session.commit()
-    return jsonify({"message": "Recipe added successfully!"}), 201
+        title = data.get('title')
+        ingredients = data.get('ingredients')
+        instructions = data.get('instructions')
+        image_url = data.get('image_url')
+
+        if not title or not ingredients or not instructions or not image_url:
+            return jsonify({"message": "Missing required fields"}), 400
+
+        new_recipe = Recipe(
+            title=title,
+            ingredients=ingredients,
+            instructions=instructions,
+            image_url=image_url,
+            user_id=current_user.id
+        )
+
+        db.session.add(new_recipe)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Recipe added successfully!",
+            "recipe": {
+                "id": new_recipe.id,
+                "title": new_recipe.title,
+                "ingredients": new_recipe.ingredients,
+                "instructions": new_recipe.instructions,
+                "image_url": new_recipe.image_url,
+                "user_id": new_recipe.user_id
+            }
+        }), 201
+    except Exception as e:
+        print(f"Error while adding recipe: {e}")
+        return jsonify({"message": "Failed to submit recipe. Please try again."}), 500
 
 # List All Recipes Route
 @app.route('/recipes', methods=['GET'])

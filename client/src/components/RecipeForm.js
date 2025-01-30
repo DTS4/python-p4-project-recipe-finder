@@ -32,7 +32,7 @@ const RecipeForm = ({ onSuccess }) => {
     }
 
     try {
-      const response = await fetch("/recipes", {
+      const response = await fetch("/add_recipe", { // Updated endpoint to match your backend route
         method: "POST",
         headers: {
           "Content-Type": "application/json",

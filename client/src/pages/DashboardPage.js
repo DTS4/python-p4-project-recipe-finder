@@ -7,20 +7,52 @@ const DashboardPage = ({ user, setUser }) => {
   const history = useHistory();
   const [recipes, setRecipes] = useState([]);
 
+  // Fetch user data if a token exists
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const response = await fetch(`/recipes?user_id=${user?.id}`);
-        if (!response.ok) throw new Error("Failed to fetch recipes");
-        const data = await response.json();
-        setRecipes(data);
-      } catch (error) {
-        console.error("Error fetching recipes:", error);
-      }
-    };
+    const token = localStorage.getItem("token");
+    if (token) {
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch("/user", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            setUser(data); // Update the user state
+          } else {
+            history.push("/login"); // Redirect to login if token is invalid
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          history.push("/login"); // Redirect to login on error
+        }
+      };
 
-    fetchRecipes();
-  }, [user?.id]); 
+      fetchUserData();
+    } else {
+      history.push("/login"); // Redirect to login if no token is found
+    }
+  }, [setUser, history]);
+
+  // Fetch user recipes based on the user ID
+  useEffect(() => {
+    if (user?.id) {
+      const fetchRecipes = async () => {
+        try {
+          const response = await fetch(`/recipes?user_id=${user.id}`);
+          if (!response.ok) throw new Error("Failed to fetch recipes");
+          const data = await response.json();
+          setRecipes(data);
+        } catch (error) {
+          console.error("Error fetching recipes:", error);
+        }
+      };
+
+      fetchRecipes();
+    }
+  }, [user?.id]);
 
   const handleNewRecipe = (newRecipe) => {
     setRecipes((prevRecipes) => [...prevRecipes, newRecipe]);

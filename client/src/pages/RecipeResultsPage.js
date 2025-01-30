@@ -35,7 +35,7 @@ const RecipeResults = () => {
 
   const handleDeleteRecipe = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5555/recipes/${id}`, {
+      const response = await fetch(`/recipes/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
