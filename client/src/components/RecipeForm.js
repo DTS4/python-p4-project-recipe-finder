@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import './RecipeForm.css';
+import "./RecipeForm.css";
 
 const RecipeForm = ({ onSuccess }) => {
   const [recipe, setRecipe] = useState({
@@ -32,7 +32,7 @@ const RecipeForm = ({ onSuccess }) => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/recipes", {
+      const response = await fetch("/recipes", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -54,12 +54,12 @@ const RecipeForm = ({ onSuccess }) => {
   };
 
   return (
-    <div className="p-4 bg-white shadow-md rounded">
+    <div className="recipe-form-container">
       <h2>Add New Recipe</h2>
-      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="field">
           <label>Title:</label>
           <input
             type="text"
@@ -70,7 +70,7 @@ const RecipeForm = ({ onSuccess }) => {
           />
         </div>
 
-        <div>
+        <div className="field">
           <label>Ingredients:</label>
           <textarea
             name="ingredients"
@@ -80,7 +80,7 @@ const RecipeForm = ({ onSuccess }) => {
           />
         </div>
 
-        <div>
+        <div className="field">
           <label>Instructions:</label>
           <textarea
             name="instructions"
@@ -90,7 +90,7 @@ const RecipeForm = ({ onSuccess }) => {
           />
         </div>
 
-        <div>
+        <div className="field">
           <label>Image URL:</label>
           <input
             type="text"

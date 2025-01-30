@@ -99,26 +99,26 @@ def add_recipe():
     return jsonify({"message": "Recipe added successfully!"}), 201
 
 # List All Recipes Route
-# @app.route('/recipes', methods=['GET'])
-# def get_recipes():
-#     try:
-#         recipes = Recipe.query.all()
-#         recipes_data = [
-#             {
-#                 "id": recipe.id,
-#                 "title": recipe.title,
-#                 "description": recipe.description,
-#                 "image_url": recipe.image_url,
-#                 "user_id": recipe.user_id
-#             }
-#             for recipe in recipes
-#         ]
-#         return jsonify(recipes_data), 200
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
+@app.route('/recipes', methods=['GET'])
+def get_recipes():
+    try:
+        recipes = Recipe.query.all()
+        recipes_data = [
+            {
+                "id": recipe.id,
+                "title": recipe.title,
+                "description": recipe.description,
+                "image_url": recipe.image_url,
+                "user_id": recipe.user_id
+            }
+            for recipe in recipes
+        ]
+        return jsonify(recipes_data), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/recipes', methods=['POST'])
-def create_recipe():  # Rename function to avoid conflict
+def create_recipe():  
     data = request.get_json()
     new_recipe = Recipe(
         title=data["title"],
@@ -129,7 +129,6 @@ def create_recipe():  # Rename function to avoid conflict
     db.session.add(new_recipe)
     db.session.commit()
     return jsonify({"message": "Recipe added successfully!", "recipe": data}), 201
-
 
 # Password Reset Route
 @app.route('/reset_password', methods=['POST'])
