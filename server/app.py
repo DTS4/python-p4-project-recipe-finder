@@ -1,184 +1,125 @@
-from flask import Flask, request, jsonify, session
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask import request, jsonify, session
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from sqlalchemy import func
 from config import app, db, bcrypt
-from models import db, Recipe
+from models import User, Recipe, Favorite
 
-# Flask-Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
-
-# Import models after initializing db
-from models import User, Recipe, Favorite
+login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))  # Updated method
 
-# Routes
-@app.route('/')
+@app.route("/")
 def home():
-    return jsonify({"message": "Welcome to the Recipe Finder!"})
+    return jsonify({"message": "Welcome to Recipe Finder!"})
 
-# User Signup Route
-@app.route('/signup', methods=['POST'])
+@app.route("/user", methods=["GET"])
+def get_current_user():
+    if not current_user.is_authenticated:
+        return jsonify({"error": "Unauthorized"}), 401  
+    return jsonify({
+        "id": current_user.id,
+        "username": current_user.username,
+        "email": current_user.email,
+    }), 200
+
+@app.route("/signup", methods=["POST"])
 def signup():
     data = request.json
-    username = data.get('username')
-    email = data.get('email')
-    password = data.get('password')
-    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    username, email, password = data.get("username"), data.get("email"), data.get("password")
 
+    if User.query.filter_by(email=email).first():
+        return jsonify({"message": "Email already registered"}), 400
+    if User.query.filter_by(username=username).first():
+        return jsonify({"message": "Username already taken"}), 400
+
+    hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
     new_user = User(username=username, email=email, password_hash=hashed_password)
+
     db.session.add(new_user)
     db.session.commit()
 
     return jsonify({"message": "User created successfully!"}), 201
 
-# Login Route
-@app.route('/login', methods=['POST'])
+@app.route("/login", methods=["POST"])
 def login():
     data = request.json
-    username = data.get('username')
-    password = data.get('password')
+    username, password = data.get("username"), data.get("password")
 
     user = User.query.filter_by(username=username).first()
     if user and bcrypt.check_password_hash(user.password_hash, password):
         login_user(user)
-        session['user_id'] = user.id  # Store user ID in session
+        session["user_id"] = user.id  
         return jsonify({"message": "Login successful!", "user_id": user.id}), 200
+    
     return jsonify({"message": "Invalid username or password"}), 401
 
-# Logout Route
-@app.route('/logout', methods=['POST'])
+@app.route("/logout", methods=["POST"])
 @login_required
 def logout():
     logout_user()
-    session.pop('user_id', None)  # Remove user ID from session
+    session.pop("user_id", None)
+    session.pop("_flashes", None)  
     return jsonify({"message": "Logged out successfully!"})
 
-# Dashboard Route
-@app.route('/dashboard')
+@app.route("/recipes", methods=["POST"])
 @login_required
-def dashboard():
-    page = request.args.get('page', 1, type=int)
-    recipes = Recipe.query.filter_by(user_id=current_user.id).paginate(page, 5, False)
-    return jsonify({
-        "recipes": [recipe.title for recipe in recipes.items],
-        "pagination": {
-            "current_page": recipes.page,
-            "total_pages": recipes.pages
-        }
-    })
-
-# Recipe Detail Route
-@app.route('/recipes/<int:recipe_id>', methods=['GET'])
-@login_required
-def recipe_detail(recipe_id):
-    recipe = Recipe.query.get_or_404(recipe_id)
-    return jsonify({
-        "id": recipe.id,
-        "title": recipe.title,
-        "description": recipe.description,
-        "image_url": recipe.image_url
-    })
-
-# Add Recipe Route
-# Add Recipe Route
-@app.route('/add_recipe', methods=['POST'])
-@login_required
-def add_recipe():
-    try:
-        data = request.get_json()
-
-        title = data.get('title')
-        ingredients = data.get('ingredients')
-        instructions = data.get('instructions')
-        image_url = data.get('image_url')
-
-        if not title or not ingredients or not instructions or not image_url:
-            return jsonify({"message": "Missing required fields"}), 400
-
-        new_recipe = Recipe(
-            title=title,
-            ingredients=ingredients,
-            instructions=instructions,
-            image_url=image_url,
-            user_id=current_user.id
-        )
-
-        db.session.add(new_recipe)
-        db.session.commit()
-
-        return jsonify({
-            "message": "Recipe added successfully!",
-            "recipe": {
-                "id": new_recipe.id,
-                "title": new_recipe.title,
-                "ingredients": new_recipe.ingredients,
-                "instructions": new_recipe.instructions,
-                "image_url": new_recipe.image_url,
-                "user_id": new_recipe.user_id
-            }
-        }), 201
-    except Exception as e:
-        print(f"Error while adding recipe: {e}")
-        return jsonify({"message": "Failed to submit recipe. Please try again."}), 500
-
-# List All Recipes Route
-@app.route('/recipes', methods=['GET'])
-def get_recipes():
-    try:
-        recipes = Recipe.query.all()
-        recipes_data = [
-            {
-                "id": recipe.id,
-                "title": recipe.title,
-                "description": recipe.description,
-                "image_url": recipe.image_url,
-                "user_id": recipe.user_id
-            }
-            for recipe in recipes
-        ]
-        return jsonify(recipes_data), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/recipes', methods=['POST'])
-def create_recipe():  
+def create_recipe():
     data = request.get_json()
+
+    if not all([data.get("title"), data.get("ingredients"), data.get("instructions")]):
+        return jsonify({"message": "Missing required fields"}), 400
+
     new_recipe = Recipe(
         title=data["title"],
         ingredients=data["ingredients"],
         instructions=data["instructions"],
-        image_url=data["image_url"],
+        image_url=data.get("image_url", ""),
+        user_id=current_user.id
     )
+
     db.session.add(new_recipe)
     db.session.commit()
-    return jsonify({"message": "Recipe added successfully!", "recipe": data}), 201
 
-# Password Reset Route
-@app.route('/reset_password', methods=['POST'])
-def reset_password():
-    data = request.json
-    email = data.get('email')
-    user = User.query.filter_by(email=email).first()
+    return jsonify({
+        "message": "Recipe added successfully!",
+        "recipe": {
+            "id": new_recipe.id,
+            "title": new_recipe.title,
+            "ingredients": new_recipe.ingredients,
+            "instructions": new_recipe.instructions,
+            "image_url": new_recipe.image_url,
+            "user_id": new_recipe.user_id
+        }
+    }), 201
 
-    if user:
-        new_password = data.get('new_password')
-        hashed_password = bcrypt.generate_password_hash(new_password).decode('utf-8')
-        user.password_hash = hashed_password
-        db.session.commit()
-        return jsonify({"message": "Password reset successfully!"})
-    
-    return jsonify({"message": "Email not found"}), 404
+@app.route("/recipes", methods=["GET"])
+@login_required
+def get_recipes():
+    try:
+        recipes = Recipe.query.filter_by(user_id=current_user.id).all()
+        return jsonify([
+            {
+                "id": r.id,
+                "title": r.title,
+                "ingredients": r.ingredients,
+                "instructions": r.instructions,
+                "image_url": r.image_url
+            }
+            for r in recipes
+        ]), 200
+    except Exception as e:
+        return jsonify({"error": "Database error", "details": str(e)}), 500 
 
-@app.route('/search', methods=['GET'])
+@app.route("/search", methods=["GET"])
 def search():
-    query = request.args.get('query', '')
+    query = request.args.get("query", "")
     recipes = Recipe.query.filter(func.lower(Recipe.title).contains(query.lower())).all()
-    return jsonify([{ "id": recipe.id, "title": recipe.title } for recipe in recipes])
 
-if __name__ == '__main__':
+    return jsonify([{"id": r.id, "title": r.title} for r in recipes])
+
+if __name__ == "__main__":
     app.run(debug=True, port=5555)
