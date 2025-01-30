@@ -1,0 +1,52 @@
+.dashboard-container {
+    text-align: center;
+    margin: 50px;
+  }
+  
+  header h1 {
+    font-family: "Roboto", sans-serif;
+    font-size: 2rem;
+    color: #333;
+  }
+  
+  header p {
+    font-family: "Roboto", sans-serif;
+    color: #666;
+    font-size: 1.2rem;
+  }
+  
+  .dashboard-content {
+    margin: 30px 0;
+  }
+  
+  .dashboard-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: white;
+    background-color: #ff6600;
+    border: none;
+    border-radius: 25px;
+    margin: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .dashboard-button:hover {
+    background-color: #e55d00;
+  }
+  
+  .logout-button {
+    padding: 8px 16px;
+    font-size: 1rem;
+    background-color: #ff3333;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .logout-button:hover {
+    background-color: #e02a2a;
+  }
+

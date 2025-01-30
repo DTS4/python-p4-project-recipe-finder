@@ -1,60 +1,137 @@
-// src/components/LoginPage.js
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useHistory } from 'react-router-dom';
-import './LoginPage.css'; // Import the CSS
+// import React, { useState } from 'react';
+// import axios from 'axios';
+// import { useHistory } from 'react-router-dom';
+// import './LoginPage.css';
 
-const LoginPage = () => {
-  const [user, setUser] = useState({
-    username: '',
-    password: '',
-  });
-  const [errorMessage, setErrorMessage] = useState('');
+// const LoginPage = ({ handleLogin }) => {
+//   const [user, setUser] = useState({
+//     username: '',
+//     password: '',
+//   });
+//   const [errorMessage, setErrorMessage] = useState('');
+//   const history = useHistory();
+
+//   const handleInputChange = (e) => {
+//     const { name, value } = e.target;
+//     setUser({
+//       ...user,
+//       [name]: value,
+//     });
+//   };
+
+//   const handleLoginRequest = async (e) => {
+//     e.preventDefault();
+//     try {
+//       const backendUrl = '/';  
+//       const response = await axios.post(`${backendUrl}/login`, user, {
+//         withCredentials: true, 
+//       });
+
+//       if (response.status === 200) {
+//         alert('Login successful');
+//         handleLogin(response.data.user);
+//         history.push('/recipes');   
+//       }
+//     } catch (error) {
+//       setErrorMessage(error.response?.data.message || 'Login failed. Check your credentials.');
+//     }
+//   };
+
+//   return (
+//     <div className="form-container">
+//       <div className="form-box">
+//         <h2>Login</h2>
+//         {errorMessage && <p className="error-message">{errorMessage}</p>}
+//         <form onSubmit={handleLoginRequest}>
+//           <input
+//             type="text"
+//             name="username"
+//             value={user.username}
+//             onChange={handleInputChange}
+//             placeholder="Username"
+//             required
+//           />
+//           <input
+//             type="password"
+//             name="password"
+//             value={user.password}
+//             onChange={handleInputChange}
+//             placeholder="Password"
+//             required
+//           />
+//           <button type="submit">Log In</button>
+//         </form>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default LoginPage;
+
+
+import React, { useState } from "react";
+import axios from "axios";
+import { useHistory } from "react-router-dom";
+import "./LoginPage.css";
+
+const LoginPage = ({ handleLogin }) => {
+  const [user, setUser] = useState({ username: "", password: "" });
+  const [errorMessage, setErrorMessage] = useState("");
   const history = useHistory();
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUser({
-      ...user,
-      [name]: value,
-    });
+    setUser({ ...user, [e.target.name]: e.target.value });
   };
 
-  const handleLogin = async (e) => {
+  const handleLoginRequest = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
+
+    if (!user.username || !user.password) {
+      setErrorMessage("Both fields are required!");
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:5555/login', user);
-      const token = response.data.token; // Assuming your backend sends a token
-      localStorage.setItem('token', token); // Store the token (e.g., localStorage)
-      history.push('/dashboard');
+      const response = await axios.post(
+        "/login",  
+        user,
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        alert("Login successful!");
+        handleLogin(response.data.user);
+        history.push("/dashboard");
+      }
     } catch (error) {
-      setErrorMessage(error.response?.data.error || 'Login failed');
+      setErrorMessage(error.response?.data.message || "Login failed. Check your credentials.");
     }
   };
 
   return (
-    <div className="login-container"> {/* Wrapping container */}
-      <div className="login-form"> {/* Form container */}
+    <div className="form-container">
+      <div className="form-box">
         <h2>Login</h2>
-        {errorMessage && <p className="error-message">{errorMessage}</p>} {/* Error message with class */}
-        <form onSubmit={handleLogin}>
-          <input
-            type="text"
-            name="username"
-            value={user.username}
-            onChange={handleInputChange}
-            placeholder="Username"
-            required
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
+        <form onSubmit={handleLoginRequest}>
+          <input 
+            type="text" 
+            name="username" 
+            value={user.username} 
+            onChange={handleInputChange} 
+            placeholder="Username" 
+            required 
           />
-          <input
-            type="password"
-            name="password"
-            value={user.password}
-            onChange={handleInputChange}
-            placeholder="Password"
-            required
+          <input 
+            type="password" 
+            name="password" 
+            value={user.password} 
+            onChange={handleInputChange} 
+            placeholder="Password" 
+            required 
           />
-          <button type="submit">Login</button>
+          <button type="submit">Log In</button>
         </form>
       </div>
     </div>

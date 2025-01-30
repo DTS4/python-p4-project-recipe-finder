@@ -1,4 +1,22 @@
 /* HomePage.css */
+
+/* General Animations */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+section {
+  animation: fadeIn 1.5s ease-out;
+}
+
+/* Header */
 header {
   text-align: center;
   margin-bottom: 30px;
@@ -6,17 +24,18 @@ header {
 
 header h1 {
   font-family: 'Roboto', sans-serif;
-  font-size: 2rem; /* Reduced font size */
+  font-size: 2.5rem;
   margin-bottom: 10px;
   color: #333;
 }
 
 header p {
   font-family: 'Roboto', sans-serif;
-  font-size: 0.9rem; /* Reduced font size */
+  font-size: 1.1rem;
   color: #666;
 }
 
+/* Search Section */
 .search-section {
   text-align: center;
   margin: 40px 0;
@@ -24,7 +43,7 @@ header p {
 
 .search-section h2 {
   font-family: 'Roboto', sans-serif;
-  font-size: 1.8rem; /* Reduced font size */
+  font-size: 2rem;
   margin-bottom: 20px;
   color: #333;
 }
@@ -36,34 +55,35 @@ header p {
 
 .search-section input {
   padding: 10px;
-  font-size: 1rem; /* Reduced font size */
+  font-size: 1rem;
   margin-right: 10px;
   width: 250px;
-  border-radius: 25px; /* More rounded */
+  border-radius: 25px;
   border: 1px solid #ddd;
   transition: all 0.3s ease-in-out;
 }
 
 .search-section input:focus {
-  border-color: #ff6600; /* Accent color */
+  border-color: #ff6600;
   outline: none;
 }
 
 .search-section button {
   padding: 10px 20px;
-  font-size: 1rem; /* Reduced font size */
+  font-size: 1rem;
   cursor: pointer;
   background-color: #ff6600;
   color: white;
   border: none;
-  border-radius: 25px; /* Rounded button */
+  border-radius: 25px;
   transition: background-color 0.3s;
 }
 
 .search-section button:hover {
-  background-color: #e55d00; /* Darker on hover */
+  background-color: #e55d00;
 }
 
+/* Featured Recipes Section */
 .featured-recipes {
   margin-top: 40px;
   text-align: center;
@@ -71,7 +91,7 @@ header p {
 
 .featured-recipes h2 {
   font-family: 'Roboto', sans-serif;
-  font-size: 2rem; /* Reduced font size */
+  font-size: 2rem;
   margin-bottom: 30px;
   color: #333;
 }
@@ -102,24 +122,156 @@ header p {
 
 .recipe-info h3 {
   font-family: 'Roboto', sans-serif;
-  font-size: 1.4rem; /* Reduced font size */
+  font-size: 1.4rem;
   margin-bottom: 10px;
   color: #333;
 }
 
 .recipe-info p {
   color: #777;
-  font-size: 1rem; /* Reduced font size */
+  font-size: 1rem;
   margin-bottom: 10px;
 }
 
 .recipe-link {
   text-decoration: none;
-  color: #ff6600;
+  color: #fff;
+  background-color: #ff6600;
   font-weight: bold;
-  font-size: 1rem; /* Reduced font size */
+  font-size: 1.1rem;
+  padding: 10px 20px;
+  border-radius: 25px;
+  transition: background-color 0.3s ease;
+}
+
+.recipe-link:hover {
+  background-color: #e55d00;
 }
 
 footer {
-  display: none; /* Remove footer for now */
+  display: none;
 }
+
+/* Section Styling for What is Recipe Finder? */
+.about-recipe-finder,
+.about-us,
+.user-feedback,
+.contact-us {
+  padding: 50px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  margin-bottom: 50px;  /* Adds spacing between sections */
+}
+
+.about-recipe-finder {
+  background-color: #f9f9f9;
+}
+
+.about-recipe-finder .text,
+.about-us .text {
+  flex: 1;
+  padding: 0 40px; /* Increased padding from 20px to 40px */
+  max-width: 800px; /* Limiting the width of the text for readability */
+}
+
+.about-recipe-finder .image-container,
+.about-us .image-container {
+  flex: 1;
+  max-width: 50%;
+}
+
+.about-recipe-finder img,
+.about-us img {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+}
+
+/* Reverse the Layout for About Us Section */
+.about-us {
+  background-color: #fff;
+  flex-direction: row-reverse;
+}
+
+/* Section Titles */
+h2 {
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Update the Heading for What People Are Saying */
+.user-feedback h2 {
+  font-family: 'Roboto', sans-serif;
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Why Choose Recipe Finder Section */
+.why-choose-recipe-finder {
+  background-color: #fff;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.why-choose-recipe-finder .text {
+  font-size: 1.2rem;
+  color: #555;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.why-choose-recipe-finder h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  text-align: center; /* Ensure centered title */
+}
+
+/* Contact Us Section */
+.contact-us {
+  background-color: #fff;
+  padding: 40px 0;
+  text-align: center;
+}
+
+.contact-us h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+}
+
+.contact-us form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+}
+
+.contact-us input,
+.contact-us textarea {
+  padding: 10px;
+  width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+}
+
+.contact-us button {
+  padding: 12px 24px;
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.contact-us button:hover {
+  background-color: #e55d00;
+}
+

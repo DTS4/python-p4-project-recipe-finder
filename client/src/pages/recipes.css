@@ -1,0 +1,78 @@
+/* Style for the main recipe results container */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  justify-content: center;
+}
+
+/* Recipe card container */
+.recipe-card {
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  padding: 15px;
+  text-align: center;
+}
+
+.recipe-card:hover {
+  transform: scale(1.03);
+}
+
+/* Recipe image */
+.recipe-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Recipe title */
+.recipe-info h3 {
+  font-size: 1.2rem;
+  margin: 10px 0;
+  color: #333;
+}
+
+/* Recipe description */
+.recipe-info p {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Buttons for view and delete */
+.recipe-link, .delete-recipe-button {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 8px 5px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+/* View button */
+.recipe-link {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+}
+
+.recipe-link:hover {
+  background-color: #45a049;
+}
+
+/* Delete button */
+.delete-recipe-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+}
+
+.delete-recipe-button:hover {
+  background-color: #e60000;
+}

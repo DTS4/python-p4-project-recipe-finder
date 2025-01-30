@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
 
-function NavBar({ isAuthenticated, handleLogout }) {
+function NavBar({ isAuthenticated, username, handleLogout }) {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
@@ -16,7 +16,10 @@ function NavBar({ isAuthenticated, handleLogout }) {
       </ul>
       <div className="navbar-auth-links">
         {isAuthenticated ? (
-          <button onClick={handleLogout} className="auth-button">Logout</button>
+          <>
+            <span className="navbar-username">Welcome, {username}!</span>
+            <button onClick={handleLogout} className="auth-button">Logout</button>
+          </>
         ) : (
           <>
             <Link to="/login" className="auth-button">Login</Link>

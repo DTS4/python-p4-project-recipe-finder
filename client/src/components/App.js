@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import NavBar from './NavBar';  
@@ -9,19 +10,22 @@ import LoginPage from '../pages/LoginPage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);  
+  const [username, setUsername] = useState('');  
 
-   const handleLogin = () => {
-    setIsAuthenticated(true);  
+  const handleLogin = (loggedInUsername) => {
+    setIsAuthenticated(true);
+    setUsername(loggedInUsername);  
   };
 
-   const handleLogout = () => {
-    setIsAuthenticated(false);  
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUsername('');  
   };
 
   return (
     <Router>
       <div>
-        <NavBar isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
+        <NavBar isAuthenticated={isAuthenticated} username={username} handleLogout={handleLogout} />
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/results" component={RecipeResultsPage} />

@@ -1,0 +1,78 @@
+/* RecipeForm.css */
+.recipe-form-container {
+    padding: 24px;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    max-width: 768px; /* Adjust as needed */
+    margin: 0 auto;
+  }
+  
+  .recipe-form-heading {
+    font-size: 1.5rem; /* 24px */
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .recipe-form-message {
+    color: red;
+    margin-bottom: 10px;
+  }
+  
+  .recipe-form-message.success {
+    color: green;
+  }
+  
+  .recipe-form-label {
+    display: block;
+    color: #374151; /* Gray-700 equivalent */
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+  
+  .recipe-form-input,
+  .recipe-form-textarea {
+    border: 1px solid #d1d5db; /* Gray-300 equivalent */
+    padding: 12px;
+    width: 100%;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+  
+  .recipe-form-input:focus,
+  .recipe-form-textarea:focus {
+    border-color: #60a5fa; /* Blue-500 equivalent */
+    box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.25); /* Ring-blue-300 equivalent */
+  }
+  
+  .recipe-form-textarea {
+    height: 96px; /* Adjust as needed */
+    resize: vertical; /* Allow vertical resizing */
+  }
+  
+  .recipe-form-textarea.instructions {
+    height: 128px; /* Adjust as needed */
+  }
+  
+  .recipe-form-button {
+    background-color: #22c55e; /* Green-500 equivalent */
+    color: white;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease-in-out;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .recipe-form-button:hover {
+    background-color: #16a346; /* Green-600 equivalent */
+  }
+  
+  .recipe-form-button:disabled {
+    background-color: #a1a1aa; /* Gray-400 equivalent */
+    cursor: default;
+  }

@@ -1,43 +1,55 @@
-# Standard library imports
+from app import app, db  # Ensure these are correctly imported from your Flask app
+from models import User, Recipe, Favorite
+from werkzeug.security import generate_password_hash
 
-# Remote library imports
-from sqlalchemy.exc import IntegrityError
-
-# Local imports
-from config import app, db
-from models import Restaurant, Pizza, RestaurantPizza
-
-# Seed data
 def seed_data():
     with app.app_context():
         # Clear existing data
-        RestaurantPizza.query.delete()
-        Pizza.query.delete()
-        Restaurant.query.delete()
+        db.session.query(Favorite).delete()
+        db.session.query(Recipe).delete()
+        db.session.query(User).delete()
+        db.session.commit()
 
-        # Add restaurants
-        restaurant1 = Restaurant(name="Pizza Palace", address="123 Main St")
-        restaurant2 = Restaurant(name="Tasty Bites", address="456 Elm St")
-        db.session.add_all([restaurant1, restaurant2])
+        # Create users
+        user1 = User(username='chef_anna', email='anna@example.com', password_hash=generate_password_hash('password1'))
+        user2 = User(username='foodie_john', email='john@example.com', password_hash=generate_password_hash('password2'))
+        user3 = User(username='baker_emily', email='emily@example.com', password_hash=generate_password_hash('password3'))
 
-        # Add pizzas
-        pizza1 = Pizza(name="Pepperoni", ingredients="Pepperoni, Cheese, Tomato Sauce")
-        pizza2 = Pizza(name="Margherita", ingredients="Cheese, Tomato, Basil")
-        pizza3 = Pizza(name="BBQ Chicken", ingredients="Chicken, BBQ Sauce, Cheese")
-        db.session.add_all([pizza1, pizza2, pizza3])
+        db.session.add_all([user1, user2, user3])
+        db.session.commit()
 
-        # Add restaurant-pizza relationships (fix the relationship name)
-        restaurant_pizza1 = RestaurantPizza(price=15, restaurant=restaurant1, pizza=pizza1)
-        restaurant_pizza2 = RestaurantPizza(price=12, restaurant=restaurant1, pizza=pizza2)
-        restaurant_pizza3 = RestaurantPizza(price=10, restaurant=restaurant2, pizza=pizza3)
-        db.session.add_all([restaurant_pizza1, restaurant_pizza2, restaurant_pizza3])
+        # Create recipes
+        recipe1 = Recipe(
+            title='Spaghetti Carbonara',
+            description='A classic Italian pasta dish with eggs, cheese, pancetta, and pepper.',
+            image_url='https://example.com/spaghetti.jpg',
+            user_id=user1.id
+        )
+        recipe2 = Recipe(
+            title='Chocolate Cake',
+            description='Rich and moist chocolate cake with creamy chocolate frosting.',
+            image_url='https://example.com/chocolate_cake.jpg',
+            user_id=user3.id
+        )
+        recipe3 = Recipe(
+            title='Avocado Toast',
+            description='Healthy and delicious avocado toast with a sprinkle of chili flakes.',
+            image_url='https://example.com/avocado_toast.jpg',
+            user_id=user2.id
+        )
 
-        try:
-            db.session.commit()
-            print("Database seeded successfully!")
-        except IntegrityError:
-            db.session.rollback()
-            print("Error: Failed to seed database due to integrity error.")
+        db.session.add_all([recipe1, recipe2, recipe3])
+        db.session.commit()
 
-if __name__ == "__main__":
+        # Create favorites
+        favorite1 = Favorite(user_id=user1.id, recipe_id=recipe2.id)  # Anna likes Emily's Chocolate Cake
+        favorite2 = Favorite(user_id=user2.id, recipe_id=recipe1.id)  # John likes Anna's Spaghetti Carbonara
+        favorite3 = Favorite(user_id=user3.id, recipe_id=recipe3.id)  # Emily likes John's Avocado Toast
+
+        db.session.add_all([favorite1, favorite2, favorite3])
+        db.session.commit()
+
+        print("Database seeded successfully!")
+
+if __name__ == '__main__':
     seed_data()

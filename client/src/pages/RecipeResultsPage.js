@@ -1,54 +1,82 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; // Use this to get the recipe ID from the URL
+import { useHistory } from 'react-router-dom';
 import './RecipeResultsPage.css';
 
 const RecipeResults = () => {
-  const [recipe, setRecipe] = useState(null);
+  const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { id } = useParams(); // Get the recipe ID from the URL
+  const [error, setError] = useState(null);
+  const history = useHistory();
 
   useEffect(() => {
-    const fetchRecipe = async () => {
+    const fetchRecipes = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:5555/recipes/${id}`);
+        const response = await fetch('/recipes', {
+          credentials: 'include',
+        });
         if (!response.ok) {
-          throw new Error("Failed to fetch recipe");
+          throw new Error('Failed to fetch recipes');
         }
         const data = await response.json();
-        setRecipe(data);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching recipe:", error);
+        setRecipes(data);
+      } catch (err) {
+        console.error(err);
+        setError('Failed to load recipes.');
+      } finally {
         setLoading(false);
       }
     };
+    fetchRecipes();
+  }, []);
 
-    fetchRecipe();
-  }, [id]);
+  const handleViewRecipe = (id) => {
+    history.push(`/recipe/${id}`);
+  };
 
-  if (loading) {
-    return <div>Loading recipe...</div>;
-  }
+  const handleDeleteRecipe = async (id) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5555/recipes/${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error('Failed to delete recipe');
+      }
+      setRecipes((prevRecipes) => prevRecipes.filter((recipe) => recipe.id !== id));
+      alert('Recipe deleted successfully');
+    } catch (err) {
+      console.error(err);
+      alert('Error deleting recipe');
+    }
+  };
 
-  if (!recipe) {
-    return <div>Recipe not found!</div>;
-  }
+  if (loading) return <div>Loading recipes...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
-    <div className="recipe-results">
-      <h2>{recipe.title}</h2>
-      <img src={recipe.image || recipe.imageUrl} alt={recipe.title} className="recipe-image" />
-      <p>{recipe.description}</p>
-
-      <h3>Ingredients</h3>
-      <ul>
-        {recipe.ingredients.map((ingredient, index) => (
-          <li key={index}>{ingredient}</li>
-        ))}
-      </ul>
-
-      <h3>Instructions</h3>
-      <p>{recipe.instructions}</p>
+    <div>
+      <h2>Recipe Results</h2>
+      <div className="recipe-grid">
+        {recipes.length > 0 ? (
+          recipes.map((recipe) => (
+            <div key={recipe.id} className="recipe-card">
+              <img src={recipe.image_url || 'https://via.placeholder.com/150'} alt={recipe.title} className="recipe-image" />
+              <div className="recipe-info">
+                <h3>{recipe.title}</h3>
+                <p>{recipe.description}</p>
+                <button onClick={() => handleViewRecipe(recipe.id)} className="recipe-link">
+                  View Recipe
+                </button>
+                <button onClick={() => handleDeleteRecipe(recipe.id)} className="delete-recipe-button">
+                  Delete Recipe
+                </button>
+              </div>
+            </div>
+          ))
+        ) : (
+          <p>No recipes found. Start adding some!</p>
+        )}
+      </div>
     </div>
   );
 };
