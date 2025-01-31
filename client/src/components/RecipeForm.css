@@ -1,153 +1,52 @@
-/* RecipeForm.css
-.recipe-form-container {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .recipe-form-container h2 {
-    text-align: center;
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 1rem;
-  }
-  
-  .recipe-form-container label {
-    display: block;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 0.5rem;
-  }
-  
-  .recipe-form-container .field {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.5rem;
-  }
-  
-  .recipe-form-container .field textarea,
-  .recipe-form-container .field input {
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    transition: border-color 0.3s ease;
-  }
-  
-  .recipe-form-container .field textarea {
-    resize: vertical;
-    min-height: 100px;
-  }
-  
-  .recipe-form-container .field input:focus,
-  .recipe-form-container .field textarea:focus {
-    border-color: #4CAF50;
-    outline: none;
-  }
-  
-  .recipe-form-container .error-message {
-    font-size: 0.875rem;
-    color: red;
-    margin-top: 0.25rem;
-  }
-  
-  .recipe-form-container button {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: bold;
-    color: white;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .recipe-form-container button:hover {
-    background-color: #45a049;
-  }
-  
-  .recipe-form-container button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-   */
-
 /* RecipeForm.css */
-
 .recipe-form-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center the form horizontally */
+  width: 500px; /* Adjust as needed */
+  margin: 20px auto;
   padding: 20px;
   border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
   background-color: #f8f8f8; /* Light background color */
-  width: 500px; /* Set a max width for the form */
-  margin: 20px auto; /* Center the container on the page */
 }
 
 .recipe-form-container h2 {
+  text-align: center;
   margin-bottom: 20px;
   color: #333; /* Darker heading color */
 }
 
-.recipe-form-container form {
-  width: 100%;
-}
-
 .recipe-form-container label {
-  display: block; /* Make labels stack on top of inputs */
+  display: block;
   margin-bottom: 5px;
   font-weight: bold;
+  color: #555; /* Slightly darker label color */
 }
 
 .recipe-form-container input,
 .recipe-form-container textarea {
-  width: calc(100% - 12px); /* Account for padding and border */
+  width: calc(100% - 12px); /* Account for padding */
   padding: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box; /* Include padding and border in element's total width and height */
+  border-radius: 3px;
+  box-sizing: border-box; /* Include padding in width */
 }
 
 .recipe-form-container textarea {
-  height: 120px; /* Set a reasonable height for textareas */
-  resize: vertical; /* Allow vertical resizing of textareas */
+  height: 120px; /* Adjust as needed */
+  resize: vertical; /* Allow vertical resizing */
 }
 
 .recipe-form-container button {
-  background-color: #4CAF50; /* Green button */
+  background-color: #007bff; /* Blue button */
   color: white;
   padding: 10px 15px;
   border: none;
-  border-radius: 4px;
+  border-radius: 3px;
   cursor: pointer;
-  transition: background-color 0.3s ease; /* Smooth hover effect */
+  transition: background-color 0.3s ease; /* Smooth transition on hover */
 }
 
 .recipe-form-container button:hover {
-  background-color: #45a049; /* Darker green on hover */
-}
-
-.recipe-form-container input:focus,
-.recipe-form-container textarea:focus {
-  outline: none; /* Remove default outline */
-  border-color: #4CAF50; /* Highlight border on focus */
-  box-shadow: 0 0 5px rgba(76, 175, 80, 0.3); /* Add a subtle shadow on focus */
-}
-
-
-/* Responsive adjustments (example) */
-@media (max-width: 600px) {
-  .recipe-form-container {
-    width: 90%; /* Make the form wider on smaller screens */
-  }
+  background-color: #0056b3; /* Darker blue on hover */
 }

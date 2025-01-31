@@ -31,7 +31,7 @@ const LoginPage = ({ handleLogin }) => {
       if (response.status === 200) {
         alert("Login successful!");
         handleLogin(response.data.user);
-        history.push("/recipes");  // Use history.push() to navigate
+        history.push("/dashboard");   
       }
     } catch (error) {
       setErrorMessage(error.response?.data.message || "Login failed. Check your credentials.");

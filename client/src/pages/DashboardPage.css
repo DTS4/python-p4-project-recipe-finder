@@ -1,52 +1,192 @@
-.dashboard-container {
-    text-align: center;
-    margin: 50px;
-  }
-  
-  header h1 {
-    font-family: "Roboto", sans-serif;
-    font-size: 2rem;
-    color: #333;
-  }
-  
-  header p {
-    font-family: "Roboto", sans-serif;
-    color: #666;
-    font-size: 1.2rem;
-  }
-  
-  .dashboard-content {
-    margin: 30px 0;
-  }
-  
-  .dashboard-button {
-    padding: 10px 20px;
-    font-size: 1rem;
-    color: white;
-    background-color: #ff6600;
-    border: none;
-    border-radius: 25px;
-    margin: 10px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .dashboard-button:hover {
-    background-color: #e55d00;
-  }
-  
-  .logout-button {
-    padding: 8px 16px;
-    font-size: 1rem;
-    background-color: #ff3333;
-    color: white;
-    border: none;
-    border-radius: 25px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .logout-button:hover {
-    background-color: #e02a2a;
-  }
+/* RecipeForm.css */
+.recipe-form-container {
+  width: 500px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: #f8f8f8;
+}
 
+.recipe-form-container h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.recipe-form-container label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+.recipe-form-container input,
+.recipe-form-container textarea {
+  width: calc(100% - 12px);
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.recipe-form-container textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+.recipe-form-container button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.recipe-form-container button:hover {
+  background-color: #0056b3;
+}
+
+
+/* DashboardPage.css */
+.dashboard-container {
+  width: 80%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-title {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.dashboard-container button { /* Add Recipe Button */
+  background-color: #28a745;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.dashboard-container button:hover {
+  background-color: #1e7e34;
+}
+
+.recipe-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  list-style: none;
+  padding: 0;
+}
+
+.recipe-item {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background-color: #f8f8f8;
+}
+
+.recipe-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.recipe-item-header {
+  text-align: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.recipe-item-content {
+  display: flex;
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.recipe-item-image {
+  width: 40%;
+  margin-right: 20px;
+}
+
+.recipe-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.recipe-item-text {
+  flex-grow: 1;
+}
+
+.recipe-item h4 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.recipe-item p {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 15px;
+}
+
+.recipe-item-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  padding: 10px;
+  border-top: 1px solid #eee;
+  background-color: #fff;
+}
+
+.recipe-item a,
+.recipe-item button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.9em;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.recipe-item a {
+  background-color: #007bff;
+  color: white;
+}
+
+.recipe-item a:hover {
+  background-color: #0056b3;
+}
+
+.recipe-item button {
+  background-color: #dc3545;
+  color: white;
+}
+
+.recipe-item button:hover {
+  background-color: #c12a36;
+}
+
+.empty-state {
+  text-align: center;
+  color: #999;
+  font-style: italic;
+  padding: 20px;
+  grid-column: 1 / -1;
+}

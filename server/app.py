@@ -44,8 +44,11 @@ def signup():
 
     return jsonify({"message": "User created successfully!"}), 201
 
-@app.route("/login", methods=["POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "GET":
+        return jsonify({"message": "Please log in via a POST request"}), 400
+
     data = request.json
     username, password = data.get("username"), data.get("password")
 
@@ -57,6 +60,7 @@ def login():
     
     return jsonify({"message": "Invalid username or password"}), 401
 
+
 @app.route("/logout", methods=["POST"])
 @login_required
 def logout():
@@ -65,11 +69,29 @@ def logout():
     session.pop("_flashes", None)  
     return jsonify({"message": "Logged out successfully!"})
 
+@app.route("/recipes", methods=["GET"])
+@login_required
+def get_recipes():
+    try:
+        recipes = Recipe.query.filter_by(user_id=current_user.id).all()
+        return jsonify([
+            {
+                "id": r.id,
+                "title": r.title,
+                "ingredients": r.ingredients,
+                "instructions": r.instructions,
+                "image_url": r.image_url
+            }
+            for r in recipes
+        ]), 200
+    except Exception as e:
+        return jsonify({"error": "Database error", "details": str(e)}), 500
+
+
 @app.route("/recipes", methods=["POST"])
 @login_required
-def create_recipe():
+def post_recipe():
     data = request.get_json()
-
     if not all([data.get("title"), data.get("ingredients"), data.get("instructions")]):
         return jsonify({"message": "Missing required fields"}), 400
 
@@ -96,40 +118,19 @@ def create_recipe():
         }
     }), 201
 
-@app.route("/recipes", methods=["GET"])
-@login_required
-def get_recipes():
-    try:
-        recipes = Recipe.query.filter_by(user_id=current_user.id).all()
-        return jsonify([
-            {
-                "id": r.id,
-                "title": r.title,
-                "ingredients": r.ingredients,
-                "instructions": r.instructions,
-                "image_url": r.image_url
-            }
-            for r in recipes
-        ]), 200
-    except Exception as e:
-        return jsonify({"error": "Database error", "details": str(e)}), 500
 
 @app.route("/search", methods=["GET"])
 def search():
     query = request.args.get("query", "")
     recipes = Recipe.query.filter(func.lower(Recipe.title).contains(query.lower())).all()
-
     return jsonify([{"id": r.id, "title": r.title} for r in recipes])
 
-# New route for searching by ingredients
 @app.route("/recipes/ingredients", methods=["GET"])
 def search_by_ingredients():
     query = request.args.get("query", "")
     recipes = Recipe.query.filter(func.lower(Recipe.ingredients).contains(query.lower())).all()
-
     return jsonify([{"id": r.id, "title": r.title, "ingredients": r.ingredients} for r in recipes])
 
-# New route for updating a recipe
 @app.route("/recipes/<int:recipe_id>", methods=["PATCH"])
 @login_required
 def update_recipe(recipe_id):
@@ -160,7 +161,6 @@ def update_recipe(recipe_id):
         }
     }), 200
 
-# New route for deleting a recipe
 @app.route("/recipes/<int:recipe_id>", methods=["DELETE"])
 @login_required
 def delete_recipe(recipe_id):

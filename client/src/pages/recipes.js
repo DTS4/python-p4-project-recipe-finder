@@ -10,7 +10,7 @@ const Recipes = () => {
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const response = await axios.get('/recipes'); // Assuming your backend is proxied
+        const response = await axios.get('/recipes'); 
         setRecipes(response.data);
       } catch (err) {
         setError('Failed to fetch recipes. Please try again later.');
