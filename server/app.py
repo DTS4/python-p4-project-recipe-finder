@@ -69,54 +69,52 @@ def logout():
     session.pop("_flashes", None)  
     return jsonify({"message": "Logged out successfully!"})
 
-@app.route("/recipes", methods=["GET"])
-@login_required
-def get_recipes():
-    try:
-        recipes = Recipe.query.filter_by(user_id=current_user.id).all()
-        return jsonify([
-            {
-                "id": r.id,
-                "title": r.title,
-                "ingredients": r.ingredients,
-                "instructions": r.instructions,
-                "image_url": r.image_url
+@app.route("/recipes", methods=["GET", "POST"])
+def recipes():
+    if request.method == "POST":
+        data = request.get_json()
+        if not all([data.get("title"), data.get("ingredients"), data.get("instructions")]):
+            return jsonify({"message": "Missing required fields"}), 400
+
+        new_recipe = Recipe(
+            title=data["title"],
+            ingredients=data["ingredients"],
+            instructions=data["instructions"],
+            image_url=data.get("image_url", ""),
+            user_id=current_user.id if current_user.is_authenticated else None  
+        )
+
+        db.session.add(new_recipe)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Recipe added successfully!",
+            "recipe": {
+                "id": new_recipe.id,
+                "title": new_recipe.title,
+                "ingredients": new_recipe.ingredients,
+                "instructions": new_recipe.instructions,
+                "image_url": new_recipe.image_url,
+                "user_id": new_recipe.user_id
             }
-            for r in recipes
-        ]), 200
-    except Exception as e:
-        return jsonify({"error": "Database error", "details": str(e)}), 500
+        }), 201
 
+    elif request.method == "GET":
+        try:
+            recipes = Recipe.query.all()   
+            return jsonify([
+                {
+                    "id": r.id,
+                    "title": r.title,
+                    "ingredients": r.ingredients,
+                    "instructions": r.instructions,
+                    "image_url": r.image_url
+                }
+                for r in recipes
+            ]), 200
+        except Exception as e:
+            return jsonify({"error": "Database error", "details": str(e)}), 500
 
-@app.route("/recipes", methods=["POST"])
-@login_required
-def post_recipe():
-    data = request.get_json()
-    if not all([data.get("title"), data.get("ingredients"), data.get("instructions")]):
-        return jsonify({"message": "Missing required fields"}), 400
-
-    new_recipe = Recipe(
-        title=data["title"],
-        ingredients=data["ingredients"],
-        instructions=data["instructions"],
-        image_url=data.get("image_url", ""),
-        user_id=current_user.id
-    )
-
-    db.session.add(new_recipe)
-    db.session.commit()
-
-    return jsonify({
-        "message": "Recipe added successfully!",
-        "recipe": {
-            "id": new_recipe.id,
-            "title": new_recipe.title,
-            "ingredients": new_recipe.ingredients,
-            "instructions": new_recipe.instructions,
-            "image_url": new_recipe.image_url,
-            "user_id": new_recipe.user_id
-        }
-    }), 201
 
 
 @app.route("/search", methods=["GET"])
