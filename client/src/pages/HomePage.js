@@ -7,45 +7,22 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check authentication on component mount
   useEffect(() => {
-    const checkAuthentication = async () => {
+    const fetchRecipes = async () => {
       try {
-        const response = await fetch('/profile', { credentials: 'include' });
-        if (response.ok) {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
+        const response = await fetch('/recipes'); // Fetch without authentication check
+        if (!response.ok) throw new Error('Failed to fetch recipes');
+        const data = await response.json();
+        setRecipes(data);
       } catch (err) {
-        console.error('Failed to check authentication', err);
-        setIsAuthenticated(false);
+        setError('Failed to load recipes.');
+      } finally {
+        setLoading(false);
       }
     };
-
-    checkAuthentication();
+    fetchRecipes();
   }, []);
-
-  // Fetch recipes only if authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      const fetchRecipes = async () => {
-        try {
-          const response = await fetch('/recipes', { credentials: 'include' });
-          if (!response.ok) throw new Error('Failed to fetch recipes');
-          const data = await response.json();
-          setRecipes(data);
-        } catch (err) {
-          setError('Failed to load recipes.');
-        } finally {
-          setLoading(false);
-        }
-      };
-      fetchRecipes();
-    }
-  }, [isAuthenticated]);
 
   const handleSearchChange = (e) => setSearchTerm(e.target.value);
 
@@ -54,8 +31,8 @@ const HomePage = () => {
   );
 
   return (
-    <div>
-      <header>
+    <div className="homepage">
+      <header className="hero-section">
         <h1>Welcome to Recipe Finder!</h1>
         <p>Discover amazing recipes handpicked for you!</p>
       </header>
@@ -66,55 +43,41 @@ const HomePage = () => {
           placeholder="Search recipes..."
           value={searchTerm}
           onChange={handleSearchChange}
+          className="search-input"
         />
       </section>
 
-      {/* Display recipes if authenticated */}
-      {isAuthenticated && (
-        <section className="featured-recipes">
-          <h2>Featured Recipes</h2>
-          {loading ? (
-            <p>Loading recipes...</p>
-          ) : error ? (
-            <p>{error}</p>
-          ) : filteredRecipes.length > 0 ? (
-            <div className="recipe-grid">
-              {filteredRecipes.map((recipe) => (
-                <div key={recipe.id} className="recipe-card">
-                  <img
-                    src={recipe.image_url || 'https://res.cloudinary.com/dulnfomcr/image/upload/v1738158416/download_2_qgx3sy.jpg'}
-                    alt={recipe.title}
-                  />
+      {/* Display Featured Recipes */}
+      <section className="featured-recipes">
+        <h2>Featured Recipes</h2>
+        {loading ? (
+          <p>Loading recipes...</p>
+        ) : error ? (
+          <p>{error}</p>
+        ) : filteredRecipes.length > 0 ? (
+          <div className="recipe-grid">
+            {filteredRecipes.slice(0, 4).map((recipe) => (
+              <div key={recipe.id} className="recipe-card">
+                <img
+                  src={recipe.image_url || 'https://res.cloudinary.com/dulnfomcr/image/upload/v1738158416/download_2_qgx3sy.jpg'}
+                  alt={recipe.title}
+                  className="recipe-image"
+                />
+                <div className="recipe-info">
                   <h3>{recipe.title}</h3>
-                  <p>{recipe.description}</p>
+                  <p className="recipe-description">{recipe.description}</p>
                   <Link to={`/recipe/${recipe.id}`} className="recipe-link">View Recipe</Link>
                 </div>
-              ))}
-            </div>
-          ) : (
-            <p>No recipes found.</p>
-          )}
-        </section>
-      )}
-
-      {/* About Recipe Finder Section */}
-      <section className="about-recipe-finder">
-        <div className="text">
-          <h2>What is Recipe Finder?</h2>
-          <p>Recipe Finder helps you discover and organize recipes effortlessly. It's designed for home cooks and professional chefs alike, helping them find the best recipes quickly!</p>
-          <ul>
-            <li>Browse thousands of recipes with ease</li>
-            <li>Save your favorite recipes for later</li>
-            <li>Share your creations with others</li>
-          </ul>
-        </div>
-        <div className="image-container">
-          <img src="https://res.cloudinary.com/dulnfomcr/image/upload/v1738158416/download_2_qgx3sy.jpg" alt="Recipe Finder" />
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No recipes found.</p>
+        )}
       </section>
 
-      {/* About Us Section */}
-      <section className="about-us">
+        {/* About Us Section */}
+        <section className="about-us">
         <div className="image-container">
           <img src="https://res.cloudinary.com/dulnfomcr/image/upload/v1738158416/download_zolibn.jpg" alt="About Us" />
         </div>

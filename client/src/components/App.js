@@ -46,40 +46,4 @@ function App() {
 
 export default App;
 
-// import React from "react";
-// import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
-// import { UserProvider, useUser } from "./UserContext";  
-// import NavBar from "./NavBar";
-// import HomePage from "../pages/HomePage";
-// import RecipeResultsPage from "../pages/RecipeResultsPage";
-// import DashboardPage from "../pages/DashboardPage";
-// import SignupPage from "../pages/SignupPage";
-// import LoginPage from "../pages/LoginPage";
-
-// const App = () => {
-//   return (
-//     <UserProvider>   
-//       <Router>
-//         <div>
-//           <NavBar />
-//           <Switch>
-//             <Route exact path="/" component={HomePage} />
-//             <Route path="/results" component={RecipeResultsPage} />
-//             <Route path="/dashboard" component={DashboardPageWithUser} />
-//             <Route path="/signup" render={() => <SignupPage />} />
-//             <Route path="/login" render={() => <LoginPage />} />
-//           </Switch>
-//         </div>
-//       </Router>
-//     </UserProvider>
-//   );
-// };
-
-// // Wrap DashboardPage with user data
-// const DashboardPageWithUser = () => {
-//   const { user, setUser } = useUser();
-
-//   return user ? <DashboardPage user={user} setUser={setUser} /> : <Redirect to="/login" />;
-// };
-
-// export default App;
+ 
