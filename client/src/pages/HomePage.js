@@ -56,7 +56,7 @@ const HomePage = () => {
           <p>{error}</p>
         ) : filteredRecipes.length > 0 ? (
           <div className="recipe-grid">
-            {filteredRecipes.slice(0, 4).map((recipe) => (
+            {filteredRecipes.slice(0, 6).map((recipe) => (
               <div key={recipe.id} className="recipe-card">
                 <img
                   src={recipe.image_url || 'https://res.cloudinary.com/dulnfomcr/image/upload/v1738158416/download_2_qgx3sy.jpg'}

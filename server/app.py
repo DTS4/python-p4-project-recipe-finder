@@ -175,5 +175,21 @@ def delete_recipe(recipe_id):
 
     return jsonify({"message": "Recipe deleted successfully!"}), 200
 
+@app.route("/recipes/<int:recipe_id>", methods=["GET"])
+def get_recipe(recipe_id):
+    recipe = Recipe.query.get(recipe_id)
+
+    if not recipe:
+        return jsonify({"message": "Recipe not found"}), 404
+
+    return jsonify({
+        "id": recipe.id,
+        "title": recipe.title,
+        "ingredients": recipe.ingredients,
+        "instructions": recipe.instructions,
+        "image_url": recipe.image_url
+    }), 200
+
+
 if __name__ == "__main__":
     app.run(debug=True, port=5555)

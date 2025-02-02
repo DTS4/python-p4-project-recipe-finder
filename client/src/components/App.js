@@ -1,25 +1,27 @@
 // src/App.js
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
-import NavBar from './NavBar';  
-import HomePage from '../pages/HomePage';  
-import RecipeResultsPage from '../pages/RecipeResultsPage';  
-import DashboardPage from '../pages/DashboardPage';  
-import SignupPage from '../pages/SignupPage';  
-import LoginPage from '../pages/LoginPage';  
+import NavBar from './NavBar';
+import HomePage from '../pages/HomePage';
+import RecipeResultsPage from '../pages/RecipeResultsPage';
+import DashboardPage from '../pages/DashboardPage';
+import SignupPage from '../pages/SignupPage';
+import LoginPage from '../pages/LoginPage';
+import RecipeDetailsPage from "../pages/RecipeDetailsPage";
+
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);  
-  const [username, setUsername] = useState('');  
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [username, setUsername] = useState('');
 
   const handleLogin = (loggedInUsername) => {
     setIsAuthenticated(true);
-    setUsername(loggedInUsername);  
+    setUsername(loggedInUsername);
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setUsername('');  
+    setUsername('');
   };
 
   return (
@@ -38,6 +40,7 @@ function App() {
           <Route path="/login" render={() => (
             isAuthenticated ? <Redirect to="/dashboard" /> : <LoginPage handleLogin={handleLogin} />
           )} />
+          <Route path="/recipes/:id" component={RecipeDetailsPage} />
         </Switch>
       </div>
     </Router>
@@ -46,4 +49,3 @@ function App() {
 
 export default App;
 
- 

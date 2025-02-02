@@ -23,7 +23,7 @@ const SignupPage = ({ handleLogin }) => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://127.0.0.1:5555/signup', user, {
+      const response = await axios.post('/signup', user, {
         headers: {
           'Content-Type': 'application/json',
         },

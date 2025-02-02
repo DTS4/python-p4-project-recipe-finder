@@ -16,7 +16,6 @@ const RecipeForm = ({ user }) => {
 
   useEffect(() => {
     if (recipeId) {
-      // Fetch existing recipe data if updating
       axios.get(`/recipes/${recipeId}`)
         .then(response => {
           setRecipe(response.data.recipe);
